@@ -5,17 +5,20 @@ import os
 import HandTrackingModule as htm
 import ctypes
 
-wcam, hcam = 640, 480
+#wcam, hcam = 640, 480
 
 cap = cv2.VideoCapture(0)
-cap.set(3, wcam)
-cap.set(4, hcam)
+#cap.set(3, wcam)
+#cap.set(4, hcam)
 
 folderPath = "Fingers/"
 
 
 myList = os.listdir(folderPath)
 overlayList = []
+myList.sort(key=lambda x: int(''.join(filter(str.isdigit, x))))
+
+
 for imPath in myList:
     image = cv2.imread(f'{folderPath}/{imPath}')
     overlayList.append(image)
@@ -26,7 +29,7 @@ resized = [cv2.resize(img, (70,70)) for img in overlayList]
 
 ptime = 0
 
-detector = htm.handDetector(resized)
+detector = htm.handDetector()
 
 
 while True:
@@ -38,7 +41,8 @@ while True:
 
     count, finger_pos, finger_number,img = detector.number_fingers(img, lmlist, 5, resized)
     
-
+    
+    print(finger_number)
     cTime = time.time()
     fps = 1/(cTime - ptime)
     ptime = cTime
